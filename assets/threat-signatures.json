@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "network": "pharos",
+  "signatures": [
+    {
+      "id": "TS-001",
+      "name": "Unlimited ERC-20 Approval",
+      "severity": "critical",
+      "description": "Token approval set to max uint256. Any approved contract can drain the full token balance at any time.",
+      "detection": "allowance == 115792089237316195423570985008687907853269984665640564039457584007913129639935",
+      "remediation": "Revoke approval: cast send <TOKEN> 'approve(address,uint256)' <SPENDER> 0"
+    },
+    {
+      "id": "TS-002",
+      "name": "Contract Address Recipient",
+      "severity": "critical",
+      "description": "Recipient is a smart contract. Sending PHRS without confirmed receive() function may result in permanent loss.",
+      "detection": "eth_getCode != '0x'",
+      "remediation": "Verify contract ABI and confirm payable receive() before transferring."
+    },
+    {
+      "id": "TS-003",
+      "name": "Zero Balance — Gas Trap",
+      "severity": "high",
+      "description": "Wallet has zero native PHRS. Cannot pay gas for any operation. All transactions will revert.",
+      "detection": "eth_getBalance == 0",
+      "remediation": "Fund wallet with minimum 0.01 PHRS for gas before any operation."
+    },
+    {
+      "id": "TS-004",
+      "name": "Dormant Wallet",
+      "severity": "medium",
+      "description": "Address has zero transaction history. Could be a fresh wallet, dust recipient, or abandoned address.",
+      "detection": "eth_getTransactionCount == 0",
+      "remediation": "Verify address ownership before sending significant value."
+    },
+    {
+      "id": "TS-005",
+      "name": "Critically Low Gas Reserve",
+      "severity": "medium",
+      "description": "Native balance below 0.01 PHRS. Most DeFi operations require more than this for gas.",
+      "detection": "eth_getBalance < 10000000000000000",
+      "remediation": "Top up native balance to at least 0.1 PHRS before executing DeFi operations."
+    },
+    {
+      "id": "TS-006",
+      "name": "High-Value Target",
+      "severity": "high",
+      "description": "Wallet holds significant PHRS balance. Elevated risk of targeted phishing, social engineering, and approval exploits.",
+      "detection": "eth_getBalance > 100000000000000000000",
+      "remediation": "Review all active approvals. Consider hardware wallet for holdings above 100 PHRS."
+    }
+  ],
+  "positive_signals": [
+    {
+      "id": "PS-001",
+      "name": "Established Transaction History",
+      "description": "Wallet has >50 transactions — consistent, long-term activity reduces risk profile.",
+      "detection": "eth_getTransactionCount > 50"
+    },
+    {
+      "id": "PS-002",
+      "name": "Recently Active",
+      "description": "Wallet has been active within the last 7 days — not dormant or abandoned.",
+      "detection": "last_tx_timestamp > (now - 604800)"
+    }
+  ]
+}
