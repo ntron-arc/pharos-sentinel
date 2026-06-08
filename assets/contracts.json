@@ -1,0 +1,27 @@
+{
+  "network": "atlantic-testnet",
+  "known_spenders": [
+    {
+      "name": "Pharos DEX Router",
+      "address": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+      "type": "dex-router",
+      "trusted": true,
+      "note": "Unlimited approval here is common but check if still needed"
+    },
+    {
+      "name": "Pharos Staking Contract",
+      "address": "0x2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c",
+      "type": "staking",
+      "trusted": true,
+      "note": "Only approve exact staking amount, not unlimited"
+    }
+  ],
+  "known_contracts": [
+    {
+      "name": "Pharos Faucet",
+      "address": "0x3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d",
+      "type": "faucet",
+      "safe_to_send": true
+    }
+  ]
+}
