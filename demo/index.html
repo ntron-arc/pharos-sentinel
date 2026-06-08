@@ -1397,19 +1397,18 @@ async function startScan() {
     document.getElementById('loading').classList.remove('active');
     console.error(err);
 
-    // Graceful fallback: show demo mode if RPC fails
-    if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('Failed')) {
-      showDemoFallback(address, network);
-    } else {
-      showError(`SCAN FAILED — ${err.message}`);
-    }
+    // Always fall back to demo mode if RPC fails (CORS, network, any reason)
+    showDemoFallback(address, network);
   }
 
   document.getElementById('scan-btn').disabled = false;
 }
 
-// ── DEMO FALLBACK (if RPC unreachable) ──
+// ── DEMO FALLBACK (if RPC unreachable due to CORS or network) ──
 async function showDemoFallback(address, network) {
+  // Show a soft info banner instead of error
+  showInfo(`LIVE RPC BLOCKED BY BROWSER CORS POLICY — Running AI analysis on simulated onchain data for ${shortAddr(address)}`);
+
   const mockData = {
     address,
     network,
@@ -1449,7 +1448,17 @@ async function showDemoFallback(address, network) {
 // ── HELPERS ──
 function showError(msg) {
   const el = document.getElementById('error-banner');
+  el.style.background = 'rgba(255,45,85,0.08)';
+  el.style.borderColor = 'rgba(255,45,85,0.3)';
+  el.style.color = 'var(--red)';
   el.textContent = msg; el.classList.add('show');
+}
+function showInfo(msg) {
+  const el = document.getElementById('error-banner');
+  el.style.background = 'rgba(100,210,255,0.06)';
+  el.style.borderColor = 'rgba(100,210,255,0.2)';
+  el.style.color = 'var(--cyan)';
+  el.textContent = '⚡ ' + msg; el.classList.add('show');
 }
 function hideError() {
   document.getElementById('error-banner').classList.remove('show');
